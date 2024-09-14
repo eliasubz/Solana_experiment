@@ -90,55 +90,7 @@ pub fn find_initialize_in_block(slot: u64, adress: &str) -> Result<(), Box<dyn s
 
 fn search_address_in_transaction(transaction: &Value, target_address: &str) -> bool {
     let mut return_value = false;
-    // Check if the "accountKeys" array contains the target address
-    if let Some(account_keys) = transaction.get("accountKeys") {
-        if account_keys.is_array() {
-            for key in account_keys.as_array().unwrap() {
-                if key == target_address {
-                    print!("Found address in account keys");
-                    return_value = true;
-                }
-            }
-        }
-    }
 
-    // Check outer instructions for accounts and data
-    if let Some(instructions) = transaction.get("instructions") {
-        if instructions.is_array() {
-            for instruction in instructions.as_array().unwrap() {
-                if let Some(accounts) = instruction.get("accounts") {
-                    if accounts.is_array() {
-                        for account in accounts.as_array().unwrap() {
-                            if account == target_address {
-                                print!("Found address in outer instructions");
-                                return_value = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Check inner instructions (nested within outer transaction)
-    if let Some(meta) = transaction.get("meta") {
-        if let Some(inner_instructions) = meta.get("innerInstructions") {
-            if inner_instructions.is_array() {
-                for instruction in inner_instructions.as_array().unwrap() {
-                    if let Some(accounts) = instruction.get("accounts") {
-                        if accounts.is_array() {
-                            for account in accounts.as_array().unwrap() {
-                                if account == target_address {
-                                    print!("Found address in inner instructions");
-                                    return_value = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
     // regex to find the address in the data field
     let transaction_str = transaction.to_string();
 
