@@ -10,7 +10,7 @@ pub fn get_recent_slots() -> Result<Vec<u64>> {
     let current_slot: u64 = rpc_client.get_slot()?;
 
     // Get the 10 most recent slots
-    let recent_slots: Vec<u64> = (current_slot - 19..=current_slot).collect();
+    let recent_slots: Vec<u64> = (current_slot - 99..=current_slot).collect();
 
     // Return the vector of recent slots
     Ok(recent_slots)

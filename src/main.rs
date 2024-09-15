@@ -17,6 +17,7 @@ fn main() -> Result<()> {
     // Slots with initilaized Mints
     //let slot = [289715401, 289602670, 289733173, 289827292];
     let slot = get_recent_slots()?;
+    //let slot = [289731948];
     println!("10 most recent slots: {:?}", slot);
     //let client = solana_client::rpc_client::RpcClient::new("https://api.mainnet-beta.solana.com".to_string());
     //monitor_program::monitor_program(&client)?; // Call the new function
