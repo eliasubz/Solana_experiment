@@ -2,16 +2,16 @@ use serde_json::{json, Value};
 use solana_client::rpc_client::RpcClient;
 use solana_client::rpc_request::RpcRequest;
 use solana_sdk::commitment_config::CommitmentConfig;
-use solana_sdk::pubkey::Pubkey;
+// use solana_sdk::pubkey::Pubkey;
 // use solana_transaction_status::{EncodedConfirmedTransactionWithStatusMeta, UiTransactionEncoding};
 use regex::Regex;
-use std::collections::HashSet;
-use std::str::FromStr;
+// use std::collections::HashSet;
+// use std::str::FromStr;
 
 pub fn check_new_liquidity_pools(
     slot: u64,
     adress: &str,
-) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
     let rpc_url = "https://api.mainnet-beta.solana.com".to_string();
     let rpc_client = RpcClient::new_with_commitment(rpc_url, CommitmentConfig::confirmed());
 
@@ -44,14 +44,14 @@ pub fn check_new_liquidity_pools(
             {
                 if contains_initialize_mint(transaction_with_meta) {
                     println!("\nNew transaction detected in block: ");
-                    println!("Transaction: {}", transaction_with_meta);
-                    return Ok(Some(transaction_with_meta.clone()));
+                    // println!("Transaction: {}", transaction_with_meta);
+                    return Ok(transaction_with_meta.clone());
                 }
             }
         }
     }
 
-    Ok((None))
+    return Ok(json!({}));
 }
 
 fn search_address_in_transaction(transaction: &Value, target_address: &str) -> bool {
