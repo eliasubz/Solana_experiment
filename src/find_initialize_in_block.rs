@@ -40,9 +40,11 @@ pub fn find_initialize_in_block(slot: u64, adress: &str) -> Result<(), Box<dyn s
         for transaction_with_meta in transactions {
             // println!("Transaction: {}", transaction_with_meta);
             // let target_address = "djgmdpnu9nagjnpx96dvdjfczrkyem3ulq67amp4rnhj";
-            if search_address_in_transaction(transaction_with_meta, adress) {
-                println!("\nNew transaction detected in block: ");
-                println!("Transaction: {}", transaction_with_meta);
+            if search_address_in_transaction(transaction_with_meta, adress)||search_address_in_transaction(transaction_with_meta, "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C"){
+                if contains_initialize_mint(transaction_with_meta){
+                    println!("\nNew transaction detected in block: ");
+                    println!("Transaction: {}", transaction_with_meta);
+                }
             }
             // let transaction = &transaction_with_meta["transaction"];
             // // println!("{}", transaction);
@@ -100,6 +102,33 @@ fn search_address_in_transaction(transaction: &Value, target_address: &str) -> b
     // Use the regex to search for the address in the stringified JSON
     return_value = re.is_match(&transaction_str);
 
+    if !is_err_null(transaction){
+        return_value = false;
+    }
     // Address not found in this transaction
     return return_value;
+}
+
+fn is_err_null(transaction: &Value) -> bool {
+    if let Some(meta) = transaction.get("meta") {
+        if let Some(err) = meta.get("err") {
+            return err.is_null();
+        }
+    }
+    false
+}
+
+fn contains_initialize_mint(transaction: &Value) -> bool {
+    if let Some(log_messages) = transaction["meta"].get("logMessages") {
+        if let Some(logs) = log_messages.as_array() {
+            for log in logs {
+                if let Some(log_str) = log.as_str() {
+                    if log_str.contains("InitializeMint") {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    false
 }

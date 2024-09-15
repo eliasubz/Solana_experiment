@@ -40,6 +40,8 @@ pub fn check_new_liquidity_pools(slot: u64) -> Result<(), Box<dyn std::error::Er
     // Parse the block and iterate over transactions
     if let Some(transactions) = block["transactions"].as_array() {
         for transaction_with_meta in transactions {
+
+            
             let transaction = &transaction_with_meta["transaction"];
             // println!("{}", transaction);
 
