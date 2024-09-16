@@ -8,13 +8,14 @@ mod rpc_client_get_block;
 use check_new_liquidity_pools::check_new_liquidity_pools;
 // use find_initialize_in_block::find_initialize_in_block;
 use get_info::get_pair_key;
-// use recent_slots::get_recent_slots;
+use recent_slots::get_recent_slots;
 use serde_json::{json, Value};
 
 fn main() -> Result<()> {
     let mut liquidity_transaction_json: Result<serde_json::Value, Box<dyn std::error::Error>> =
         Ok(json!({}));
 
+    /*
     // Get the transaction JSON
     liquidity_transaction_json = check_new_liquidity_pools(
         289921934,
@@ -38,9 +39,10 @@ fn main() -> Result<()> {
     let pair_key_trimmed = pair_key.trim_matches('"');
     let token_url = format!("{}{}", dexscreener_base_url, pair_key_trimmed);
     println!("Link to Radium with this token: {}", token_url);
+    */
 
     // Slots with initilaized Mints
-    let slot = [289715401, 289602670, 289733173, 289827292];
+    //let slot = [289715401, 289602670, 289733173, 289827292];
     // let slot = get_recent_slots()?;
     // println!("10 most recent slots: {:?}", slot);
     //let client = solana_client::rpc_client::RpcClient::new("https://api.mainnet-beta.solana.com".to_string());
@@ -55,10 +57,19 @@ fn main() -> Result<()> {
         //"CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
     ];
 
+    let addresses = [
+        "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8", // Radiyum liquidity pool
+        "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C", // CPMM creation of token
+        "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb", // InitializeMint2
+    ];
+
+    let slot = get_recent_slots()?;
+    println!("{:?}", slot);
+    //let slot = [289715401, 289602670, 289733173, 289827292];
     for i in 0..slot.len() {
-        match check_new_liquidity_pools(slot[i], "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8") {
+        match check_new_liquidity_pools(slot[i], addresses) {
             Ok(transaction) => {
-                // println!("Transaction found: {}", transaction);
+                //println!("Transaction found: {}", transaction);
             }
             Err(_) => todo!(),
         }

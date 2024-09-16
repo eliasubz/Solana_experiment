@@ -10,8 +10,8 @@ use regex::Regex;
 
 pub fn check_new_liquidity_pools(
     slot: u64,
-    adress: &str,
-) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+    addresses: [&str; 3],
+) -> Result<Option<Value>, Box<dyn std::error::Error>> {
     let rpc_url = "https://api.mainnet-beta.solana.com".to_string();
     let rpc_client = RpcClient::new_with_commitment(rpc_url, CommitmentConfig::confirmed());
 
@@ -26,32 +26,23 @@ pub fn check_new_liquidity_pools(
     // Correct the send method to use RpcRequest::GetBlock and pass the parameters
     let block: serde_json::Value = rpc_client.send(RpcRequest::GetBlock, params)?;
 
-    // Define the program IDs of known DEXs (e.g., Serum, Raydium)
-    let dex_program_id = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8"; // Raydium liquidity mint
-
-    // let dexscreener_base_url = "https://dexscreener.com/solana/";
-
     // Parse the block and iterate over transactions
     if let Some(transactions) = block["transactions"].as_array() {
         for transaction_with_meta in transactions {
-            // println!("Transaction: {}", transaction_with_meta);
-            // let target_address = "djgmdpnu9nagjnpx96dvdjfczrkyem3ulq67amp4rnhj";
-            if search_address_in_transaction(transaction_with_meta, adress)
-                || search_address_in_transaction(
-                    transaction_with_meta,
-                    "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
-                )
-            {
-                if contains_initialize_mint(transaction_with_meta) {
-                    println!("\nNew transaction detected in block: ");
-                    // println!("Transaction: {}", transaction_with_meta);
-                    return Ok(transaction_with_meta.clone());
+            for address in addresses {
+                if search_address_in_transaction(transaction_with_meta, address){
+                    if contains_initialize_mint(transaction_with_meta) {
+                        println!("\nNew transaction detected in block: ");
+                        println!("Transaction: {}", transaction_with_meta);
+
+                        return Ok(Some(transaction_with_meta.clone()));
+                    }
                 }
             }
         }
     }
 
-    return Ok(json!({}));
+    Ok(None)
 }
 
 fn search_address_in_transaction(transaction: &Value, target_address: &str) -> bool {
