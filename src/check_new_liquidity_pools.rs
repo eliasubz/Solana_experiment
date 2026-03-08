@@ -4,14 +4,11 @@ use solana_client::rpc_client::RpcClient;
 use solana_client::rpc_request::RpcRequest;
 use solana_sdk::commitment_config::CommitmentConfig;
 
-const RAYDIUM_AMM: &str = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8";
-const RAYDIUM_CPMM: &str = "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C";
-
 /// Scan a block for new Raydium liquidity pool creations.
 /// Returns the first matching transaction, or an empty JSON object if none found.
 pub fn check_new_liquidity_pools(
     slot: u64,
-    address: &str,
+    addresses: &[&str],
 ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
     let rpc_url = "https://api.mainnet-beta.solana.com".to_string();
     let rpc_client = RpcClient::new_with_commitment(rpc_url, CommitmentConfig::confirmed());
@@ -25,13 +22,11 @@ pub fn check_new_liquidity_pools(
 
     let block: Value = rpc_client.send(RpcRequest::GetBlock, params)?;
 
-    let targets = [address, RAYDIUM_AMM, RAYDIUM_CPMM];
-
     if let Some(transactions) = block["transactions"].as_array() {
         // Use rayon to scan transactions in parallel across CPU cores
         let result = transactions
             .par_iter()
-            .find_any(|tx| is_new_liquidity_pool(tx, &targets))
+            .find_any(|tx| is_new_liquidity_pool(tx, addresses))
             .cloned();
 
         if let Some(tx) = result {
@@ -46,7 +41,7 @@ pub fn check_new_liquidity_pools(
 /// Scan a block and return ALL matching liquidity pool transactions.
 pub fn find_all_new_liquidity_pools(
     slot: u64,
-    address: &str,
+    addresses: &[&str],
 ) -> Result<Vec<serde_json::Value>, Box<dyn std::error::Error>> {
     let rpc_url = "https://api.mainnet-beta.solana.com".to_string();
     let rpc_client = RpcClient::new_with_commitment(rpc_url, CommitmentConfig::confirmed());
@@ -60,13 +55,11 @@ pub fn find_all_new_liquidity_pools(
 
     let block: Value = rpc_client.send(RpcRequest::GetBlock, params)?;
 
-    let targets = [address, RAYDIUM_AMM, RAYDIUM_CPMM];
-
     let matches = block["transactions"]
         .as_array()
         .map(|txs| {
             txs.par_iter()
-                .filter(|tx| is_new_liquidity_pool(tx, &targets))
+                .filter(|tx| is_new_liquidity_pool(tx, addresses))
                 .cloned()
                 .collect::<Vec<_>>()
         })
