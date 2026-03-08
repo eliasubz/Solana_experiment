@@ -4,7 +4,7 @@ use solana_sdk::{signature::Signer, system_instruction, transaction::Transaction
 
 /// Sends 1 lamport from your wallet to yourself.
 pub fn send_one_lamport() -> Result<()> {
-    let rpc_client = wallet::rpc_client(Some(true));
+    let rpc_client = wallet::rpc_client(true);
     let payer = wallet::load_keypair()?;
     let to_pubkey = payer.pubkey(); // Send to self
 

@@ -28,8 +28,9 @@ pub fn load_keypair() -> Result<Keypair> {
 }
 
 /// Create a new RPC client connected to mainnet.
-pub fn rpc_client(on_dev: Option<bool>) -> RpcClient {
-    let url = if on_dev.unwrap_or(true){"https://api.devnet.solana.com"} else {RPC_URL};
+pub fn rpc_client(on_dev: bool) -> RpcClient {
+    let url = if on_dev {"https://api.devnet.solana.com"} else {RPC_URL};
+    println!("Connecting to RPC at {}", url);
     return RpcClient::new_with_commitment(url.to_string(), CommitmentConfig::confirmed());
 }
 
