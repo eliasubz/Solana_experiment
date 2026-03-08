@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use anyhow::Result;
+use std::collections::HashMap;
 mod check_new_liquidity_pools;
 mod first_tx;
 mod get_balance;
@@ -7,12 +7,12 @@ mod get_info;
 mod recent_slots;
 mod utils;
 
+use crate::utils::wallet;
 use check_new_liquidity_pools::check_new_liquidity_pools;
 use first_tx::send_one_lamport;
 use get_balance::get_balance;
 use get_info::{extract_pool_keys, get_pair_key};
 use recent_slots::get_recent_slots;
-use crate::utils::wallet;
 
 fn main() -> Result<()> {
     // Devnet Client
@@ -24,9 +24,18 @@ fn main() -> Result<()> {
     send_one_lamport()?;
 
     let target_addresses: HashMap<&str, &str> = HashMap::from([
-        ("675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8", "Raydium liquidity pool"),
-        ("CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C", "CPMM creation of token"),
-        ("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",  "InitializeMint2"),
+        (
+            "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
+            "Raydium liquidity pool",
+        ),
+        (
+            "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+            "CPMM creation of token",
+        ),
+        (
+            "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+            "InitializeMint2",
+        ),
     ]);
 
     let rpc_client = wallet::rpc_client(false);
