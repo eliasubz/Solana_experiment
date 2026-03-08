@@ -12,7 +12,7 @@ pub fn get_pair_key(json: &Value) -> Option<String> {
     let mint_instruction = get_mint_instruction(&instructions, rad_key_idx).unwrap();
     print!("mint_instruction: {}", mint_instruction);
 
-    // Find index of Keypair address
+    // Get index of Keypair address
     let mut key_pair_idx: u64 = 0;
     if let Some(key_pair) = mint_instruction["accounts"].get(4) {
         println!("This is the key_pair: {}", key_pair);
@@ -24,6 +24,7 @@ pub fn get_pair_key(json: &Value) -> Option<String> {
             return None;
         }
     }
+
     //
     let key_pair_idx = key_pair_idx as usize;
     let key_pair_address = get_key_id_with_index(account_keys, key_pair_idx).unwrap();
@@ -71,7 +72,6 @@ fn get_key_id_with_index(account_keys: &Value, key_index: usize) -> Option<Value
         println!("\n This is where Im looking through \n{}", account_keys);
         println!("Could not find the account address at index: {}", key_index);
     }
-
     None
 }
 

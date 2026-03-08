@@ -3,8 +3,8 @@ mod check_new_liquidity_pools;
 mod find_initialize_in_block;
 mod get_info;
 mod launch_terminal;
-mod recent_slots;
-mod rpc_client_get_block;
+// mod recent_slots;
+// mod rpc_client_get_block;
 use check_new_liquidity_pools::check_new_liquidity_pools;
 // use find_initialize_in_block::find_initialize_in_block;
 use get_info::get_pair_key;
@@ -12,6 +12,10 @@ use get_info::get_pair_key;
 use serde_json::{json, Value};
 
 fn main() -> Result<()> {
+    // Example usage of calculate_send
+    // calculate_send::calculate_sends(289921934);
+    launch_terminal::launch_new_terminal();
+
     let mut liquidity_transaction_json: Result<serde_json::Value, Box<dyn std::error::Error>> =
         Ok(json!({}));
 
@@ -19,16 +23,6 @@ fn main() -> Result<()> {
     liquidity_transaction_json = check_new_liquidity_pools(
         289921934,
         "3CApfZGRDowZHPMxJkw2N662Yd12kpD89ohxESkYMyCBBuGkgwtf6Pk24cc3pJqJ8MvEjVcKDbzHDTjTKRyH6ATR",
-    );
-
-    liquidity_transaction_json = check_new_liquidity_pools(
-        289993862,
-        "25TC3Xw93WwakkPyKMVCxNmTZg1wA3Hz7kFxt44cfpvcjki5FZZCqQb4RhtVg7MdvE8bf8AzS4fUoZcUjnLnyjQx",
-    );
-
-    liquidity_transaction_json = check_new_liquidity_pools(
-        289988322,
-        "4H5y6hS8g4qZswtNpiXKLRykpSDW3gRuLXR1mh3Yw7EV8yT9xgTEaTQmVrRhoazrhZYXtXNvNxX9fn9DB6RjswfV",
     );
 
     // Get pair key
@@ -50,9 +44,7 @@ fn main() -> Result<()> {
         "4f7xU4uWHonHMhiRAQ7J2Meq2xfFUsHXSMaC5vwhGm2YfSmduf6Ugb2Bot1LB2UmdV2gs1H4EUPAhC1e9Yg7SBvu",
         "63ghaciFGHkchhCw7Bdr3wY1pSzxQytNr6W4cpiJr5xGN4NsCANs57pDZAusuGWuijqfZVoMbqRSpgpx8emKQpx4",
         "2k4qM96n4uExfjV6tZoYRJpjJLRE2nM1N3trEetV3uMH1QRzX8xEQwFkcRfAV21Uppfj3qgi1C8RNZ63AKNDa8Jn",
-        // "3D86cvGHdVE4RkHfPjtmYZymu2RQVYVSL3ZNPPGJFTn5PoyVGwjs4ySCWtkZgpTqi8s121LRmfwDMrDVreR5JFo1",
-        // "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
-        //"CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+
     ];
 
     for i in 0..slot.len() {
@@ -63,16 +55,5 @@ fn main() -> Result<()> {
             Err(_) => todo!(),
         }
     }
-
-    // for i in slot..=slot {
-    //     println!(); // Empty row
-    //     println!(); // Empty row
-    //     println!("Slot: {}", i);
-    //     match check_new_liquidity_pools(slot) {
-    //         Ok(_) => println!("Check completed successfully."),
-    //         Err(err) => eprintln!("Error occurred: {:?}", err),
-    //     }
-    // }
-
     Ok(())
 }
