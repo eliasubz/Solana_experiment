@@ -2989,15 +2989,12 @@ name = "sol_scanner"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "bincode",
  "dirs",
  "rayon",
- "regex",
  "serde",
  "serde_json",
  "solana-client",
  "solana-sdk",
- "solana-transaction-status",
 ]
 
 [[package]]

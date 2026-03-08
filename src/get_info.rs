@@ -1,5 +1,7 @@
 extern crate serde_json;
 use serde_json::Value;
+use std::fmt;
+
 
 const RAYDIUM_AMM_PROGRAM: &str = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8";
 
@@ -18,6 +20,24 @@ pub struct RaydiumPoolKeys {
     pub target_orders: String,
     pub serum_program: String,
     pub serum_market: String,
+}
+
+impl fmt::Display for RaydiumPoolKeys {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "╔═══ Raydium Pool Keys ═══")?;
+        writeln!(f, "║ AMM ID:        {}", self.amm_id)?;
+        writeln!(f, "║ AMM Authority: {}", self.amm_authority)?;
+        writeln!(f, "║ Open Orders:   {}", self.amm_open_orders)?;
+        writeln!(f, "║ LP Mint:       {}", self.lp_mint)?;
+        writeln!(f, "║ Base Mint:     {}", self.base_mint)?;
+        writeln!(f, "║ Quote Mint:    {}", self.quote_mint)?;
+        writeln!(f, "║ Base Vault:    {}", self.base_vault)?;
+        writeln!(f, "║ Quote Vault:   {}", self.quote_vault)?;
+        writeln!(f, "║ Target Orders: {}", self.target_orders)?;
+        writeln!(f, "║ Serum Program: {}", self.serum_program)?;
+        writeln!(f, "║ Serum Market:  {}", self.serum_market)?;
+        write!(f, "╚═════════════════════════")
+    }
 }
 
 /// Extract all pool keys from a Raydium AMM initialize transaction.

@@ -2,17 +2,14 @@ use rayon::prelude::*;
 use serde_json::{json, Value};
 use solana_client::rpc_client::RpcClient;
 use solana_client::rpc_request::RpcRequest;
-use solana_sdk::commitment_config::CommitmentConfig;
 
 /// Scan a block for new Raydium liquidity pool creations.
 /// Returns the first matching transaction, or an empty JSON object if none found.
 pub fn check_new_liquidity_pools(
+    rpc_client: &RpcClient,
     slot: u64,
     addresses: &[&str],
 ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
-    let rpc_url = "https://api.mainnet-beta.solana.com".to_string();
-    let rpc_client = RpcClient::new_with_commitment(rpc_url, CommitmentConfig::confirmed());
-
     let params = json!([slot, {
         "encoding": "json",
         "transactionDetails": "full",
@@ -31,49 +28,13 @@ pub fn check_new_liquidity_pools(
 
         if let Some(tx) = result {
             println!("\nNew liquidity pool detected in slot {}", slot);
+            println!("\nThe transaction: {}", tx);
+            println!("\nand address: {}", addresses[0]);
             return Ok(tx);
         }
     }
 
     Ok(json!({}))
-}
-
-/// Scan a block and return ALL matching liquidity pool transactions.
-pub fn find_all_new_liquidity_pools(
-    slot: u64,
-    addresses: &[&str],
-) -> Result<Vec<serde_json::Value>, Box<dyn std::error::Error>> {
-    let rpc_url = "https://api.mainnet-beta.solana.com".to_string();
-    let rpc_client = RpcClient::new_with_commitment(rpc_url, CommitmentConfig::confirmed());
-
-    let params = json!([slot, {
-        "encoding": "json",
-        "transactionDetails": "full",
-        "rewards": false,
-        "maxSupportedTransactionVersion": 0
-    }]);
-
-    let block: Value = rpc_client.send(RpcRequest::GetBlock, params)?;
-
-    let matches = block["transactions"]
-        .as_array()
-        .map(|txs| {
-            txs.par_iter()
-                .filter(|tx| is_new_liquidity_pool(tx, addresses))
-                .cloned()
-                .collect::<Vec<_>>()
-        })
-        .unwrap_or_default();
-
-    if !matches.is_empty() {
-        println!(
-            "\nFound {} new liquidity pool(s) in slot {}",
-            matches.len(),
-            slot
-        );
-    }
-
-    Ok(matches)
 }
 
 /// Fast check: is this transaction a new liquidity pool creation?
